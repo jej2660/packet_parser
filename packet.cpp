@@ -16,7 +16,7 @@ void usage() {
     printf("sample: pcap-test wlan0\n");
 }
 
-void Slice(uint32_t source_ip, uint32_t dest_ip){
+void Slice(uint32_t source_ip, uint32_t dest_ip){//ip 를 보기 좋게 자름
     printf("Source_ip: %d.%d.%d.%d\tDest_ip: %d.%d.%d.%d\n", (source_ip & 0xFF000000) >> 24, (source_ip & 0x00FF0000) >> 16, (source_ip & 0x0000FF00) >> 8, (source_ip & 0x000000FF), (dest_ip & 0xFF000000) >> 24, (dest_ip & 0x00FF0000) >> 16, (dest_ip & 0x0000FF00) >> 8, (dest_ip & 0x000000FF));
 }
 //1111 1111 0000 0000 0000
@@ -41,7 +41,7 @@ int Print_tcp_info(const u_char *source){
     return tcp->th_off * 4;
 }
 
-void Print_payload_info(const u_char *source){
+void Print_payload_info(const u_char *source){//16바이트 데이터 출력
     for(int i = 0;i <= 15;i++){
         printf("%02x ", *source);
         source++;
@@ -52,13 +52,13 @@ void Print_payload_info(const u_char *source){
 void Print_info(const u_char *source, int len){
     int pos = 0;
     libnet_ipv4_hdr *ipv = (libnet_ipv4_hdr *)(source+14);
-    if(ipv->ip_p != 6) return;
+    if(ipv->ip_p != 6) return;//프로토콜을 확인하여 tcp 인지 아닌지 판단
     Print_ether_info(source);
     pos = Print_ip_info(source + 14);
     pos += Print_tcp_info(source + 14 + pos);
     //printf("POS:   %d\n", pos);
     //printf("DATA:    %02x\n", *(source + 14 + pos));
-    if(pos + 14 != len){
+    if(pos + 14 != len){//L5 데이터가 있는지 없는지 판단
         Print_payload_info(source + 14 + pos);
     }
     else{
